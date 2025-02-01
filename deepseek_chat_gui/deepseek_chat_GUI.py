@@ -12,8 +12,8 @@ HISTORY_FILE = "chat_history.json"
 
 
 class OllamaChatClient:
-    def __init__(self, model_name="deepseek-r1:1.5b"):
-        self.base_url = "http://localhost:11434/api/generate"
+    def __init__(self, base_url="http://localhost:11434", model_name="deepseek-r1:1.5b"):
+        self.base_url = base_url
         self.model_name = model_name
         self.chat_history = []
         self.dialogues = {}
@@ -54,7 +54,7 @@ class OllamaChatClient:
 
             response_text = ""
             with requests.post(
-                self.base_url,
+                f"{self.base_url}/api/generate",
                 headers={"Content-Type": "application/json"},
                 data=json.dumps(data),
                 stream=True
@@ -84,6 +84,18 @@ class OllamaChatClient:
     def remove_think_tags(self, content):
         import re
         return re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL)
+
+    def list_models(self):
+        try:
+            response = requests.get(f"{self.base_url}/api/tags")
+            if response.status_code == 200:
+                return response.json().get("models", [])
+            else:
+                messagebox.showerror("错误", f"无法获取模型列表，状态码: {response.status_code}")
+                return []
+        except Exception as e:
+            messagebox.showerror("错误", f"获取模型列表时出错: {e}")
+            return []
 
 
 class ChatGUI:
@@ -123,9 +135,26 @@ class ChatGUI:
         self.send_button = ttk.Button(self.master, text="发送", command=self.on_send_button_clicked)
         self.send_button.grid(row=2, column=2, padx=10, pady=10, sticky="ew")
 
+        # 添加API URL输入框
+        self.api_url_label = ttk.Label(self.master, text="API URL:")
+        self.api_url_label.grid(row=3, column=0, padx=10, pady=10, sticky="e")
+        self.api_url_entry = ttk.Entry(self.master, width=50)
+        self.api_url_entry.insert(0, self.client.base_url)
+        self.api_url_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+
+        # 添加模型选择框
+        self.model_label = ttk.Label(self.master, text="选择模型:")
+        self.model_label.grid(row=4, column=0, padx=10, pady=10, sticky="e")
+        self.model_combobox = ttk.Combobox(self.master, state="readonly")
+        self.model_combobox.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
+        self.model_combobox.bind("<<ComboboxSelected>>", self.on_model_selected)
+
+        # 获取模型列表并填充到选择框中
+        self.update_model_list()
+
         # 添加控制框架
         control_frame = ttk.Frame(self.master)
-        control_frame.grid(row=3, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        control_frame.grid(row=5, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
         self.add_clear_button(control_frame)
         self.add_new_dialogue_button(control_frame)
 
@@ -134,16 +163,28 @@ class ChatGUI:
         self.master.grid_rowconfigure(1, weight=0)
         self.master.grid_rowconfigure(2, weight=0)
         self.master.grid_rowconfigure(3, weight=0)
+        self.master.grid_rowconfigure(4, weight=0)
+        self.master.grid_rowconfigure(5, weight=0)
         self.master.grid_columnconfigure(0, weight=0)
         self.master.grid_columnconfigure(1, weight=1)
         self.master.grid_columnconfigure(2, weight=0)
 
+    def update_model_list(self):
+        self.client.base_url = self.api_url_entry.get()  # 更新 base_url
+        models = self.client.list_models()
+        model_names = [model["name"] for model in models]
+        self.model_combobox["values"] = model_names
+        if model_names:
+            self.model_combobox.current(0)
+            self.client.model_name = model_names[0]
+
+    def on_model_selected(self, event):
+        selected_model = self.model_combobox.get()
+        self.client.model_name = selected_model
+
     def on_enter_pressed(self, event):
-        if event.state & 0x4:  # 检测Ctrl键
-            return  # 允许换行
-        else:
-            self.send_message()
-            return "break"# 阻止Text小部件插入换行符
+        self.send_message()
+        return "break"  # 阻止Text小部件插入换行符
 
     def on_send_button_clicked(self):
         self.send_message()
@@ -161,6 +202,7 @@ class ChatGUI:
             self.stream_display.config(state=tk.DISABLED)
 
     def get_response(self, message):
+        self.client.base_url = self.api_url_entry.get()  # 更新 base_url
         for response in self.client.chat(message, self.current_conversation):
             self.response_queue.put(response)
 
