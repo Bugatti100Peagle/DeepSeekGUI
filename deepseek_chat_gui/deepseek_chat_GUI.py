@@ -193,7 +193,8 @@ class ChatGUI:
             if self.current_conversation in self.history:
                 for message in self.history[self.current_conversation]:
                     role = "你" if message["role"] == "user" else "助手"
-                    self.chat_display.insert(tk.END, f"{role}: {message['content']}\n", role)
+                    tag = "user" if role == "你" else "bot"
+                    self.chat_display.insert(tk.END, f"{role}: {message['content']}\n", tag)
 
 if __name__ == "__main__":
     root = tk.Tk()
