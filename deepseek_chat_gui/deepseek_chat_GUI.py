@@ -18,7 +18,13 @@ class OllamaChatClient:
         self.chat_history = []
         self.dialogues = {}
 
+        self.check_and_create_history_file()
         self.load_history()
+
+    def check_and_create_history_file(self):
+        if not os.path.exists(HISTORY_FILE):
+            with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
+                json.dump({}, f, ensure_ascii=False, indent=4)
 
     def load_history(self):
         if os.path.exists(HISTORY_FILE):
@@ -140,6 +146,8 @@ class ChatGUI:
         self.send_message()
 
     def send_message(self):
+        if not self.current_conversation:
+            self.new_dialogue()
         message = self.entry.get("1.0", tk.END).strip()
         if message and self.current_conversation:
             self.append_html(f"<p><b>你:</b> {message}</p>")
@@ -209,6 +217,8 @@ class ChatGUI:
         self.history_listbox.delete(0, tk.END)
         if os.path.exists(HISTORY_FILE):
             os.remove(HISTORY_FILE)
+        self.client.check_and_create_history_file()
+        self.new_dialogue()  # 清空历史后自动新建一个对话
 
     def new_dialogue(self):
         dialogue_name = self.client.new_dialogue()
