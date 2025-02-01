@@ -1,11 +1,3 @@
-'''
-Description: 
-Version: 
-Autor: JingJing zjqvrwz2020@163.com 
-Date: 2025-02-01 15:12:37
-LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-01 16:18:56
-'''
 import requests
 import json
 

@@ -10,6 +10,46 @@ from datetime import datetime
 
 HISTORY_FILE = "chat_history.json"
 
+GITHUB_CSS = """
+<style>
+/* GitHub Markdown CSS */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    line-height: 1.5;
+    color: #24292e;
+    background-color: #ffffff;
+    padding: 20px;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+pre {
+    background-color: #f6f8fa;
+    padding: 16px;
+    overflow: auto;
+    border-radius: 3px;
+}
+code {
+    background-color: #f6f8fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+</style>
+"""
 
 class OllamaChatClient:
     def __init__(self, model_name="deepseek-r1:1.5b"):
@@ -189,7 +229,7 @@ class ChatGUI:
 
     def append_html(self, html):
         self.html_content += html
-        self.chat_display.set_html(self.html_content)
+        self.chat_display.set_html(GITHUB_CSS + self.html_content)
 
     def add_clear_button(self, control_frame):
         clear_btn = ttk.Button(
@@ -210,7 +250,7 @@ class ChatGUI:
     def clear_history(self):
         self.client.dialogues = {}
         self.html_content = ""
-        self.chat_display.set_html("")
+        self.chat_display.set_html(GITHUB_CSS + "")
         self.stream_display.config(state=tk.NORMAL)
         self.stream_display.delete(1.0, tk.END)
         self.stream_display.config(state=tk.DISABLED)
@@ -227,7 +267,7 @@ class ChatGUI:
         self.history_listbox.selection_set(tk.END)
         self.current_conversation = dialogue_name
         self.html_content = ""
-        self.chat_display.set_html("")
+        self.chat_display.set_html(GITHUB_CSS + "")
         self.stream_display.config(state=tk.NORMAL)
         self.stream_display.delete(1.0, tk.END)
         self.stream_display.config(state=tk.DISABLED)
@@ -243,7 +283,7 @@ class ChatGUI:
             index = selection[0]
             self.current_conversation = self.history_listbox.get(index)
             self.html_content = ""
-            self.chat_display.set_html("")
+            self.chat_display.set_html(GITHUB_CSS + "")
             if self.current_conversation in self.history:
                 for message in self.history[self.current_conversation]:
                     role = "你" if message["role"] == "user" else "助手"

@@ -1,11 +1,3 @@
-'''
-Description: Ollama GUI聊天客户端
-Version: 1.2
-Author: JingJing zjqvrwz2020@163.com
-Date: 2025-02-01 15:12:37
-LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-01 19:05:38
-'''
 import tkinter as tk
 from tkinter import scrolledtext, ttk, messagebox
 import threading
