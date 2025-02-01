@@ -4,7 +4,7 @@ Version: 1.2
 Author: JingJing zjqvrwz2020@163.com
 Date: 2025-02-01 15:12:37
 LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-01 18:56:23
+LastEditTime: 2025-02-01 19:05:38
 '''
 import tkinter as tk
 from tkinter import scrolledtext, ttk, messagebox
@@ -95,15 +95,10 @@ class ChatGUI:
         control_frame.grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
         self.add_clear_button(control_frame)
 
-        # 新建对话按钮
-        new_conversation_button = ttk.Button(self.master, text="新建对话", command=self.new_conversation)
-        new_conversation_button.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
-
         # 设置行列权重
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_rowconfigure(1, weight=0)
         self.master.grid_rowconfigure(2, weight=0)
-        self.master.grid_rowconfigure(3, weight=0)
         self.master.grid_columnconfigure(0, weight=0)
         self.master.grid_columnconfigure(1, weight=1)
         self.master.grid_columnconfigure(2, weight=0)
@@ -150,14 +145,6 @@ class ChatGUI:
         self.history_listbox.delete(0, tk.END)
         if os.path.exists(HISTORY_FILE):
             os.remove(HISTORY_FILE)
-
-    def new_conversation(self):
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
-        self.current_conversation = {"summary": current_time, "messages": []}
-        self.history.append(self.current_conversation)
-        self.history_listbox.insert(tk.END, self.current_conversation["summary"])
-        self.chat_display.delete(1.0, tk.END)
-        self.save_history()
 
     def save_history(self):
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
