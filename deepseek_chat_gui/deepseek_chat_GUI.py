@@ -7,6 +7,7 @@ import requests
 import json
 import os
 from datetime import datetime
+from style import apply_styles, themes, load_selected_theme  # 导入样式文件和主题字典
 
 HISTORY_FILE = "chat_history.json"
 
@@ -109,6 +110,10 @@ class ChatGUI:
 
         # 初始化界面
         self.setup_ui()
+
+        # 应用默认样式
+        self.apply_default_styles()
+
         # 启动队列检查
         self.master.after(100, self.process_queue)
 
@@ -117,46 +122,70 @@ class ChatGUI:
 
         # 左侧历史对话列表框
         self.history_listbox = tk.Listbox(self.master)
-        self.history_listbox.grid(row=0, column=0, rowspan=3, padx=10, pady=10, sticky="ns")
+        self.history_listbox.grid(row=0, column=0, rowspan=6, padx=10, pady=10, sticky="ns")
         self.history_listbox.bind("<<ListboxSelect>>", self.on_history_select)
         self.load_history_to_listbox()
 
-        self.chat_display = HTMLLabel(self.master, wrap=tk.WORD)
-        self.chat_display.grid(row=0, column=1, columnspan=2, padx=10, pady=10, sticky="nsew")
+        # 聊天显示区域
+        self.chat_display = HTMLLabel(self.master, background="#ffffff", foreground="#333333", html="<h3>Ollama Chat</h3>")
+        self.chat_display.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
 
-        self.stream_display = tk.Text(self.master, height=8, wrap=tk.WORD)  # 用于流式输出展示模型输出内容
-        self.stream_display.grid(row=1, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
-        self.stream_display.config(state=tk.DISABLED)
+        # 流式输出展示区域
+        self.stream_display = tk.Text(self.master, height=8, wrap=tk.WORD, state=tk.DISABLED)
+        self.stream_display.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
-        self.entry = tk.Text(self.master, height=4)  # 使用Text小部件并设置高度为4行
-        self.entry.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        # 输入框
+        self.entry = tk.Text(self.master, height=4)
+        self.entry.grid(row=2, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
         self.entry.bind("<Return>", self.on_enter_pressed)
 
+        # 发送按钮
         self.send_button = ttk.Button(self.master, text="发送", command=self.on_send_button_clicked)
-        self.send_button.grid(row=2, column=2, padx=10, pady=10, sticky="ew")
+        self.send_button.grid(row=2, column=3, padx=10, pady=10, sticky="e")
 
-        # 添加API URL输入框
-        self.api_url_label = ttk.Label(self.master, text="API URL:")
-        self.api_url_label.grid(row=3, column=0, padx=10, pady=10, sticky="e")
-        self.api_url_entry = ttk.Entry(self.master, width=50)
+        # 设置列权重
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_columnconfigure(2, weight=1)
+        self.master.grid_columnconfigure(3, weight=0)
+
+        # API URL和模型选择框架
+        settings_frame = ttk.Frame(self.master)
+        settings_frame.grid(row=3, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+
+        # API URL输入框
+        self.api_url_label = ttk.Label(settings_frame, text="API URL:")
+        self.api_url_label.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        self.api_url_entry = ttk.Entry(settings_frame, width=50)
         self.api_url_entry.insert(0, self.client.base_url)
-        self.api_url_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+        self.api_url_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
 
-        # 添加模型选择框
-        self.model_label = ttk.Label(self.master, text="选择模型:")
-        self.model_label.grid(row=4, column=0, padx=10, pady=10, sticky="e")
-        self.model_combobox = ttk.Combobox(self.master, state="readonly")
-        self.model_combobox.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
+        # 模型选择框
+        self.model_label = ttk.Label(settings_frame, text="选择模型:")
+        self.model_label.grid(row=1, column=0, padx=10, pady=10, sticky="e")
+        self.model_combobox = ttk.Combobox(settings_frame, state="readonly")
+        self.model_combobox.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
         self.model_combobox.bind("<<ComboboxSelected>>", self.on_model_selected)
+
+        # 设置行列权重
+        settings_frame.grid_columnconfigure(0, weight=0)
+        settings_frame.grid_columnconfigure(1, weight=1)
 
         # 获取模型列表并填充到选择框中
         self.update_model_list()
 
-        # 添加控制框架
+        # 控制框架
         control_frame = ttk.Frame(self.master)
-        control_frame.grid(row=5, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        control_frame.grid(row=5, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
         self.add_clear_button(control_frame)
         self.add_new_dialogue_button(control_frame)
+
+        # 主题选择框
+        self.theme_label = ttk.Label(self.master, text="选择主题:")
+        self.theme_label.grid(row=6, column=0, padx=10, pady=10, sticky="e")
+        self.theme_combobox = ttk.Combobox(self.master, state="readonly", values=list(themes.keys()))
+        self.theme_combobox.grid(row=6, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.theme_combobox.bind("<<ComboboxSelected>>", self.on_theme_selected)
+        self.theme_combobox.current(0)  # 默认选择第一个主题
 
         # 设置行列权重
         self.master.grid_rowconfigure(0, weight=1)
@@ -165,9 +194,23 @@ class ChatGUI:
         self.master.grid_rowconfigure(3, weight=0)
         self.master.grid_rowconfigure(4, weight=0)
         self.master.grid_rowconfigure(5, weight=0)
+        self.master.grid_rowconfigure(6, weight=0)
         self.master.grid_columnconfigure(0, weight=0)
         self.master.grid_columnconfigure(1, weight=1)
-        self.master.grid_columnconfigure(2, weight=0)
+        self.master.grid_columnconfigure(2, weight=1)
+        self.master.grid_columnconfigure(3, weight=1)
+
+    def apply_default_styles(self):
+        widgets = {
+            'entry': self.entry,
+            'stream_display': self.stream_display,
+            'history_listbox': self.history_listbox,
+            'theme_combobox': self.theme_combobox,
+            'chat_display': self.chat_display
+        }
+        selected_theme = load_selected_theme()
+        apply_styles(self.master, widgets, selected_theme)
+        self.theme_combobox.set(selected_theme)
 
     def update_model_list(self):
         self.client.base_url = self.api_url_entry.get()  # 更新 base_url
@@ -181,6 +224,17 @@ class ChatGUI:
     def on_model_selected(self, event):
         selected_model = self.model_combobox.get()
         self.client.model_name = selected_model
+
+    def on_theme_selected(self, event):
+        selected_theme = self.theme_combobox.get()
+        widgets = {
+            'entry': self.entry,
+            'stream_display': self.stream_display,
+            'history_listbox': self.history_listbox,
+            'theme_combobox': self.theme_combobox,
+            'chat_display': self.chat_display
+        }
+        apply_styles(self.master, widgets, selected_theme)
 
     def on_enter_pressed(self, event):
         self.send_message()
