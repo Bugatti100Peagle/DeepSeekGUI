@@ -44,6 +44,7 @@ class OllamaChatClient:
                 "stream": True  # 启用流式传输
             }
 
+            response_text = ""
             with requests.post(
                 self.base_url,
                 headers={"Content-Type": "application/json"},
@@ -60,11 +61,13 @@ class OllamaChatClient:
                             yield "\n"  # 在响应完成后添加换行符
                             break
                         if "response" in chunk:
-                            self.dialogues[dialogue_name].append({"role": "bot", "content": chunk["response"]})
-                            self.save_history()
+                            response_text += chunk["response"]
                             yield chunk["response"]
                         else:
                             yield f"响应格式错误: {chunk}"
+            
+            self.dialogues[dialogue_name].append({"role": "bot", "content": response_text})
+            self.save_history()
         
         except Exception as e:
             yield f"DeepSeek聊天API调用错误：{e}"
@@ -177,6 +180,7 @@ class ChatGUI:
         self.chat_display.delete(1.0, tk.END)
 
     def load_history_to_listbox(self):
+        self.history_listbox.delete(0, tk.END)
         for dialogue_name in self.history.keys():
             self.history_listbox.insert(tk.END, dialogue_name)
 
