@@ -10,46 +10,6 @@ from datetime import datetime
 
 HISTORY_FILE = "chat_history.json"
 
-GITHUB_CSS = """
-<style>
-/* GitHub Markdown CSS */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    line-height: 1.5;
-    color: #24292e;
-    background-color: #ffffff;
-    padding: 20px;
-}
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 24px;
-    margin-bottom: 16px;
-    font-weight: 600;
-    line-height: 1.25;
-}
-p {
-    margin-top: 0;
-    margin-bottom: 16px;
-}
-a {
-    color: #0366d6;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-pre {
-    background-color: #f6f8fa;
-    padding: 16px;
-    overflow: auto;
-    border-radius: 3px;
-}
-code {
-    background-color: #f6f8fa;
-    padding: 2px 4px;
-    border-radius: 3px;
-}
-</style>
-"""
 
 class OllamaChatClient:
     def __init__(self, model_name="deepseek-r1:1.5b"):
@@ -179,8 +139,11 @@ class ChatGUI:
         self.master.grid_columnconfigure(2, weight=0)
 
     def on_enter_pressed(self, event):
-        self.send_message()
-        return "break"  # 阻止Text小部件插入换行符
+        if event.state & 0x4:  # 检测Ctrl键
+            return  # 允许换行
+        else:
+            self.send_message()
+            return "break"# 阻止Text小部件插入换行符
 
     def on_send_button_clicked(self):
         self.send_message()
@@ -229,7 +192,7 @@ class ChatGUI:
 
     def append_html(self, html):
         self.html_content += html
-        self.chat_display.set_html(GITHUB_CSS + self.html_content)
+        self.chat_display.set_html(self.html_content)
 
     def add_clear_button(self, control_frame):
         clear_btn = ttk.Button(
@@ -250,7 +213,7 @@ class ChatGUI:
     def clear_history(self):
         self.client.dialogues = {}
         self.html_content = ""
-        self.chat_display.set_html(GITHUB_CSS + "")
+        self.chat_display.set_html("")
         self.stream_display.config(state=tk.NORMAL)
         self.stream_display.delete(1.0, tk.END)
         self.stream_display.config(state=tk.DISABLED)
@@ -258,7 +221,9 @@ class ChatGUI:
         if os.path.exists(HISTORY_FILE):
             os.remove(HISTORY_FILE)
         self.client.check_and_create_history_file()
+        self.history = self.client.dialogues  # 更新历史记录
         self.new_dialogue()  # 清空历史后自动新建一个对话
+        self.load_history_to_listbox()  # 更新对话列表
 
     def new_dialogue(self):
         dialogue_name = self.client.new_dialogue()
@@ -267,15 +232,15 @@ class ChatGUI:
         self.history_listbox.selection_set(tk.END)
         self.current_conversation = dialogue_name
         self.html_content = ""
-        self.chat_display.set_html(GITHUB_CSS + "")
+        self.chat_display.set_html("")
         self.stream_display.config(state=tk.NORMAL)
         self.stream_display.delete(1.0, tk.END)
         self.stream_display.config(state=tk.DISABLED)
 
     def load_history_to_listbox(self):
-        self.history_listbox.delete(0, tk.END)
-        for dialogue_name in self.history.keys():
-            self.history_listbox.insert(tk.END, dialogue_name)
+        self.history_listbox.delete(0, tk.END)  # 清空列表
+        for dialogue_name in self.client.dialogues.keys():
+            self.history_listbox.insert(tk.END, dialogue_name)  # 重新加载对话
 
     def on_history_select(self, event):
         selection = self.history_listbox.curselection()
@@ -283,9 +248,9 @@ class ChatGUI:
             index = selection[0]
             self.current_conversation = self.history_listbox.get(index)
             self.html_content = ""
-            self.chat_display.set_html(GITHUB_CSS + "")
-            if self.current_conversation in self.history:
-                for message in self.history[self.current_conversation]:
+            self.chat_display.set_html("")
+            if self.current_conversation in self.client.dialogues:
+                for message in self.client.dialogues[self.current_conversation]:
                     role = "你" if message["role"] == "user" else "助手"
                     content = self.remove_think_tags(message['content'])
                     content = self.double_blank_lines(content)
