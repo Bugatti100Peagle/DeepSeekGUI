@@ -1,11 +1,3 @@
-'''
-Description: Ollama GUI聊天客户端
-Version: 1.3
-Author: JingJing zjqvrwz2020@163.com
-Date: 2025-02-01 15:12:37
-LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-01 19:14:12
-'''
 import tkinter as tk
 from tkinter import scrolledtext, ttk, messagebox
 import threading
@@ -194,9 +186,10 @@ class ChatGUI:
             index = selection[0]
             self.current_conversation = self.history_listbox.get(index)
             self.chat_display.delete(1.0, tk.END)
-            for message in self.history[self.current_conversation]:
-                role = "你" if message["role"] == "user" else "助手"
-                self.chat_display.insert(tk.END, f"{role}: {message['content']}\n", role)
+            if self.current_conversation in self.history:
+                for message in self.history[self.current_conversation]:
+                    role = "你" if message["role"] == "user" else "助手"
+                    self.chat_display.insert(tk.END, f"{role}: {message['content']}\n", role)
 
 if __name__ == "__main__":
     root = tk.Tk()
