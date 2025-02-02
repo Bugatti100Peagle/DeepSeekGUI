@@ -53,6 +53,23 @@
 
 ![image-20250202101606528](https://newblogimg.oss-cn-beijing.aliyuncs.com/2024/image-20250202101606528.png)
 
+### 打包成可执行文件
+
+1. 安装 `PyInstaller`：
+
+    ```sh
+    pip install pyinstaller
+    ```
+
+2. 运行打包脚本 `build_exe.bat`：
+
+    ```sh
+    pyinstaller --onefile --windowed deepseek_chat_GUI.py
+    ```
+
+3. 在 `dist` 文件夹中找到生成的 `deepseek_chat_GUI.exe` 文件。
+4. 双击运行 `deepseek_chat_GUI.exe`。
+
 ## 贡献
 
 欢迎任何形式的贡献！请提交问题或拉取请求以帮助改进该项目。
