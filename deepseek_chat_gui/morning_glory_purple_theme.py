@@ -4,15 +4,15 @@ def apply_styles(master, widgets):
     style = ttk.Style(master)
     style.theme_use("clam")
 
-    # 主背景色（浅蓝）
-    bg_color = "#e3f2fd"  # 淡蓝色
-    fg_color = "#0d47a1"  # 深蓝色
-    select_bg_color = "#1e88e5"  # 中等蓝色
+    # 主背景色（浅紫）
+    bg_color = "#f3e5f5"  # 淡紫色，类似于牵牛花的浅色
+    fg_color = "#4a148c"  # 深紫色
+    select_bg_color = "#7b1fa2"  # 中等紫色
     select_fg_color = "white"  # 白色
 
     # 配置样式
-    style.configure("TButton", padding=5, relief="flat", background="#1e88e5", foreground="white")
-    style.map("TButton", background=[("active", "#1976d2")])
+    style.configure("TButton", padding=5, relief="flat", background="#7b1fa2", foreground="white")
+    style.map("TButton", background=[("active", "#6a1b9a")])
     style.configure("TLabel", background=bg_color, foreground=fg_color)
     style.configure("TEntry", padding=5, fieldbackground="#ffffff", foreground=fg_color)
     style.configure("TCombobox", padding=5, fieldbackground="#ffffff", foreground=fg_color)

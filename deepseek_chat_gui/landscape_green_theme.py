@@ -1,18 +1,26 @@
+'''
+Description: 
+Version: 
+Autor: JingJing zjqvrwz2020@163.com 
+Date: 2025-02-02 10:05:35
+LastEditors: JingJing zjqvrwz2020@163.com m
+LastEditTime: 2025-02-02 10:09:57
+'''
 from tkinter import ttk
 
 def apply_styles(master, widgets):
     style = ttk.Style(master)
     style.theme_use("clam")
 
-    # 主背景色（浅蓝）
-    bg_color = "#e3f2fd"  # 淡蓝色
-    fg_color = "#0d47a1"  # 深蓝色
-    select_bg_color = "#1e88e5"  # 中等蓝色
+    # 主背景色（浅绿）
+    bg_color = "#e0f2f1"  # 淡水绿
+    fg_color = "#004d40"  # 深绿
+    select_bg_color = "#00796b"  # 中等绿色
     select_fg_color = "white"  # 白色
 
     # 配置样式
-    style.configure("TButton", padding=5, relief="flat", background="#1e88e5", foreground="white")
-    style.map("TButton", background=[("active", "#1976d2")])
+    style.configure("TButton", padding=5, relief="flat", background="#00796b", foreground="white")
+    style.map("TButton", background=[("active", "#00695c")])
     style.configure("TLabel", background=bg_color, foreground=fg_color)
     style.configure("TEntry", padding=5, fieldbackground="#ffffff", foreground=fg_color)
     style.configure("TCombobox", padding=5, fieldbackground="#ffffff", foreground=fg_color)

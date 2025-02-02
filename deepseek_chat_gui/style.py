@@ -1,3 +1,11 @@
+'''
+Description: 
+Version: 
+Autor: JingJing zjqvrwz2020@163.com 
+Date: 2025-02-01 23:02:56
+LastEditors: JingJing zjqvrwz2020@163.com m
+LastEditTime: 2025-02-02 10:14:54
+'''
 import tkinter as tk
 from tkinter import ttk
 
@@ -7,6 +15,8 @@ import moon_palace_blue_theme
 import heavenly_white_theme
 import crab_shell_blue_theme
 import chinese_red_theme
+import landscape_green_theme
+import morning_glory_purple_theme
 
 import json
 import os
@@ -18,6 +28,8 @@ themes = {
     "天汉白": heavenly_white_theme.apply_styles,
     "蟹壳青": crab_shell_blue_theme.apply_styles,
     "中国红": chinese_red_theme.apply_styles,
+    "山水绿": landscape_green_theme.apply_styles,
+    "牵牛紫": morning_glory_purple_theme.apply_styles,
 }
 
 THEME_FILE = "selected_theme.json"
