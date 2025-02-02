@@ -1,11 +1,3 @@
-'''
-Description: 
-Version: 
-Autor: JingJing zjqvrwz2020@163.com 
-Date: 2025-02-02 10:05:35
-LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-02 10:09:57
-'''
 from tkinter import ttk
 
 def apply_styles(master, widgets):

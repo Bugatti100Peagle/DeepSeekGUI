@@ -2,3 +2,4 @@
 /deepseek_chat_gui/__pycache__
 /deepseek_chat_gui/chat_history.json
 /deepseek_chat_gui/selected_theme.json
+/deepseek_chat_gui/themes/__pycache__

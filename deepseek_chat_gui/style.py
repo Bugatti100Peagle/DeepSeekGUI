@@ -1,22 +1,14 @@
-'''
-Description: 
-Version: 
-Autor: JingJing zjqvrwz2020@163.com 
-Date: 2025-02-01 23:02:56
-LastEditors: JingJing zjqvrwz2020@163.com m
-LastEditTime: 2025-02-02 10:14:54
-'''
 import tkinter as tk
 from tkinter import ttk
 
 # 导入所有主题文件
-import spring_apricot_yellow_theme
-import moon_palace_blue_theme
-import heavenly_white_theme
-import crab_shell_blue_theme
-import chinese_red_theme
-import landscape_green_theme
-import morning_glory_purple_theme
+from themes import spring_apricot_yellow_theme
+from themes import moon_palace_blue_theme
+from themes import heavenly_white_theme
+from themes import crab_shell_blue_theme
+from themes import chinese_red_theme
+from themes import landscape_green_theme
+from themes import morning_glory_purple_theme
 
 import json
 import os
