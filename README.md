@@ -1,43 +1,43 @@
-# DeepSeek本地客户端
+# DeepSeek Local Client
 
-## 项目描述
+## Project Description
 
-该项目是一个基于 Tkinter 库构建的聊天客户端，名为 Ollama GUI 聊天客户端。它允许用户与Ollama聊天模型进行交互，并保存聊天历史记录。
+This project is a chat client built using the Tkinter library, named Ollama GUI Chat Client. It allows users to interact with the Ollama chat model and save chat history.
 
-## 功能
+## Features
 
-- 用户可以输入消息并与聊天模型进行对话。
-- 支持流式传输响应。
-- 用户可以通过点击按钮新建对话，使用当前时间的时间戳作为对话名称。
-- 保存历史对话名称和对应的聊天记录到 `chat_history.json` 文件中。
-- 支持主题切换，并记忆用户上次选择的主题。
+- Users can input messages and converse with the chat model.
+- Supports streaming responses.
+- Users can create new conversations by clicking a button, using a timestamp as the conversation name.
+- Saves historical conversation names and corresponding chat records to the `chat_history.json` file.
+- Supports theme switching and remembers the user's last selected theme.
 
-## 文件说明
+## File Description
 
-- `deepseek_chat_GUI.py`：主程序文件，包含聊天客户端的 GUI 实现和与聊天模型的交互逻辑。
-- `style.py`：样式文件，包含不同主题的样式定义和主题切换逻辑。
-- `chat_history.json`：存储用户与模型之间的聊天历史记录的文件。
-- `selected_theme.json`：存储用户上次选择的主题。
-- `README.md`：项目文档，包含项目的功能、使用方法和其他相关信息。
-- `requirements.txt`：项目依赖的 Python 库列表。
+- `deepseek_chat_GUI.py`: Main program file, containing the GUI implementation of the chat client and interaction logic with the chat model.
+- `style.py`: Style file, containing style definitions for different themes and theme switching logic.
+- `chat_history.json`: File storing the chat history between users and the model.
+- `selected_theme.json`: File storing the user's last selected theme.
+- `README.md`: Project documentation, including features, usage methods, and other relevant information.
+- `requirements.txt`: List of Python libraries required for the project.
 
-## 使用方法
+## Usage
 
-1. 确保已安装所需的 Python 库。可以使用以下命令安装依赖：
+1. Ensure that the required Python libraries are installed. You can install dependencies using the following command:
 
     ```sh
     pip install -r requirements.txt
     ```
 
-2. 运行 `deepseek_chat_GUI.py` 文件以启动聊天客户端：
+2. Run the `deepseek_chat_GUI.py` file to start the chat client:
 
     ```sh
     python deepseek_chat_GUI.py
     ```
 
-3. 在界面中输入消息与模型进行对话。
-4. 点击“新建对话”按钮以创建新的对话并保存历史记录。
-5. 使用主题选择框切换主题，程序会记忆用户上次选择的主题。
+3. Input messages in the interface to converse with the model.
+4. Click the "New Conversation" button to create a new conversation and save the history.
+5. Use the theme selection box to switch themes; the program will remember the user's last selected theme.
 
 ![image-20250202010100330](https://newblogimg.oss-cn-beijing.aliyuncs.com/2024/image-20250202010100330.png)
 
@@ -53,23 +53,23 @@
 
 ![image-20250202101606528](https://newblogimg.oss-cn-beijing.aliyuncs.com/2024/image-20250202101606528.png)
 
-### 打包成可执行文件
+### Packaging into an Executable File
 
-1. 安装 `PyInstaller`：
+1. Install `PyInstaller`:
 
     ```sh
     pip install pyinstaller
     ```
 
-2. 运行打包脚本 `build_exe.bat`：
+2. Run the packaging script `build_exe.bat`:
 
     ```sh
     pyinstaller --onefile --windowed deepseek_chat_GUI.py
     ```
 
-3. 在 `dist` 文件夹中找到生成的 `deepseek_chat_GUI.exe` 文件。
-4. 双击运行 `deepseek_chat_GUI.exe`。
+3. Find the generated `deepseek_chat_GUI.exe` file in the `dist` folder.
+4. Double-click to run `deepseek_chat_GUI.exe`.
 
-## 贡献
+## Contributions
 
-欢迎任何形式的贡献！请提交问题或拉取请求以帮助改进该项目。
+Any form of contribution is welcome! Please submit issues or pull requests to help improve this project.
